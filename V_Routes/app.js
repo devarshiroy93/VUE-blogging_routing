@@ -80,7 +80,7 @@ var secondComponent = Vue.component('component2', {
                     </v-card-title>
                     <v-card-actions>
                     <v-btn flat class="orange--text">Share{{p.id}}</v-btn>
-                    <p class="orange--text btn btn--flat"><router-link to = "/inpost/a">Explore</router-link></p>
+                    <p class="orange--text btn btn--flat"><router-link :to = "'/inpost/' + p.id">Explore</router-link></p>
                     </v-card-actions>
                     </v-card>
                     </v-flex>
@@ -102,7 +102,10 @@ var secondComponent = Vue.component('component2', {
         fetchData: function () {
             var self = this._data;
             axios.get('http://jsonplaceholder.typicode.com/' + this.$route.params.id)
-                .then(response => this.post = response.data)
+                .then(response => {
+				this.post = response.data;
+				console.log('hi')
+				} );
 
         }
     },
@@ -121,8 +124,8 @@ var individualPostComp = Vue.component('indPostComp',{
                                     <v-card>
                                         <v-card-title primary-title>
                                             <div>
-                                                 <h3 class="headline mb-0">component 3<span></span></h3>
-                                                 <div></div>
+                                                 <h3 class="headline mb-0">{{postData.title}}<span></span></h3>
+                                                 <div>{{postData.body}}</div>
                                             </div>
                                         </v-card-title>
                                         <v-card-actions>
@@ -136,16 +139,34 @@ var individualPostComp = Vue.component('indPostComp',{
                             </v-container>
                         </div>
                     </div>`,
+					data : function(){
+						return {
+							'postData' : {'title': '','body' : '','userId' : ''}
+						}
+					},
                     created(){
+						debugger
                         console.log(this.$route.params.id)
-                    }
+						this.fetchPostData();
+                    },
+					
+					methods : {
+						fetchPostData : function(){
+							debugger
+							 axios.get('http://jsonplaceholder.typicode.com/posts/' + this.$route.params.id)
+							.then(response => {
+							this.postData = response.data;
+							
+							} );
+						}
+					}
 })
 
 
 const routes = [
     { path: '/page1/:id', component: firstComponent },
     { path: '/page2/:id', component: secondComponent },
-  { path: '/inpost/:id', component: individualPostComp},
+	{ path: '/inpost/:id', component: individualPostComp}
 ]
 const router = new VueRouter({
     routes
