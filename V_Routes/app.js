@@ -129,11 +129,12 @@ var individualPostComp = Vue.component('indPostComp',{
                                             </div>
                                         </v-card-title>
                                         <v-card-actions>
-                                            <v-btn flat class="orange--text">Share</v-btn>
-                                            <v-btn flat class="orange--text">Comment</v-btn>
+                                            <v-btn flat class="orange--text" v-on:click = "">Share</v-btn>
+                                            <div v-on:click = "beginComment" ><v-btn flat class="orange--text" >Comment</v-btn></div>
                                             <v-btn flat class="orange--text">Report</v-btn>
                                         </v-card-actions>
                                      </v-card>
+				<div><comment-comp :showComment = doComment></comment-comp></div>
                                 </v-flex>
                              </v-layout>
                             </v-container>
@@ -141,7 +142,9 @@ var individualPostComp = Vue.component('indPostComp',{
                     </div>`,
 					data : function(){
 						return {
-							'postData' : {'title': '','body' : '','userId' : ''}
+							'postData' : {'title': '','body' : '','userId' : '',},
+							'doComment' : false
+							
 						}
 					},
                     created(){
@@ -158,10 +161,41 @@ var individualPostComp = Vue.component('indPostComp',{
 							this.postData = response.data;
 							
 							} );
+						},
+						beginComment : function(){
+							this.doComment = true;
 						}
 					}
 })
 
+Vue.component('commentComp',{'template' : `<div>
+						<div>
+						<v-card>
+						 <v-subheader >Comments</v-subheader>
+						<div v-for ="comment in commentsData"><v-subheader >{{comment.title}}</v-subheader>
+						<p>from :{{comment.from}}</p>
+						</div>
+						</v-card>
+						</div>
+					        <div v-if = showComment>
+						<v-card >	
+						<v-text-field
+						name="input-1"
+						label="click here to comment"
+						id="testing">
+						</v-text-field>
+						<v-btn light >Comment </v-btn>
+						</v-card>
+						</div>
+						</div>`,
+											
+				 props: ['showComment'],							
+				data : function(){
+					return{
+						'commentsData' : [{'title' : 'Not very clear' , 'from ' : 'anonymous'}]
+					}
+				}
+});;
 
 const routes = [
     { path: '/page1/:id', component: firstComponent },
@@ -175,8 +209,3 @@ var app = new Vue({
     router,
     el: "#app",
 }).$mount('#app')
-
-
-
-
-
