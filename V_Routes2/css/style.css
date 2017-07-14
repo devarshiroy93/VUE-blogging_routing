@@ -1,0 +1,22 @@
+.comment-wrapper{
+    margin-top: 2%;
+    background-color: rgba(128, 128, 128, 0.09);
+    border-radius: 4px;
+    padding-bottom: 1em;
+    box-shadow: 4px 1px 3px 2px #d0c9c9;
+}
+.comment-line{
+	margin-left: 1.7em;
+    font-size: 14px;
+}
+.comment-owner{
+	margin-right: 1em;
+    color: ble;
+    color: #ffab52;
+}
+.like{
+	padding-left:2em;
+}
+.enableHand{
+	cursor:pointer;
+}
