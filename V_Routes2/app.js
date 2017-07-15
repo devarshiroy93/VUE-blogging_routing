@@ -36,7 +36,7 @@ var firstComponent = Vue.component('component1', {
           </v-flex>
         </v-layout>
         <div>
-              <v-btn primary dark>Normal</v-btn>
+              <v-btn primary dark>Login</v-btn>
      </div>
       </v-container>
       
@@ -66,6 +66,9 @@ var firstComponent = Vue.component('component1', {
 })
 var secondComponent = Vue.component('component2', {
     'template': `  <div>
+                        <div class ="loaderClass">
+                    <loader-comp :showLoader="post===null"></loader-comp>
+                        </div>
                     <div>
 					<div v-on:click="clickMethod2">List of all posts</div><div v-for = 'p in post'>
                      <v-container fluid>
@@ -105,6 +108,7 @@ var secondComponent = Vue.component('component2', {
                 .then(response => {
 				this.post = response.data;
 				console.log('hi')
+                
 				} );
 
         }
@@ -118,11 +122,13 @@ var secondComponent = Vue.component('component2', {
 var individualPostComp = Vue.component('indPostComp',{
     'template' : `<div>
                     <div>
+                        
                         <v-container fluid>
                             <v-layout row>
                                 <v-flex xs6 offset-xs3>
                                     <v-card>
                                         <v-card-title primary-title>
+                                        <loader-comp :showLoader="postData.title===''"></loader-comp>
                                             <div>
                                                  <h3 class="headline mb-0">{{postData.title}}<span></span></h3>
                                                  <div>{{postData.body}}</div>
@@ -151,14 +157,14 @@ var individualPostComp = Vue.component('indPostComp',{
 						}
 					},
                     created(){
-						debugger
+						
                         console.log(this.$route.params.id)
 						this.fetchPostData();
                     },
 					
 					methods : {
 						fetchPostData : function(){
-							debugger
+							
 							 axios.get('http://jsonplaceholder.typicode.com/posts/' + this.$route.params.id)
 							.then(response => {
 							this.postData = response.data;
@@ -175,8 +181,8 @@ Vue.component('commentComp',{'template' : `<div>
 											<div class="comment-wrapper">
 											<label class= "subheader">Comments:</label>
 												<div class="comment-line" v-for = "c in commentsData">
-													<span class="comment-owner">{{c.from}}</span><span>{{c.title}}</span>
-													<p><span class="enableHand" v-on:click ="addLike(c)">Like</span><span style="margin-right: 10em;"><img class="like"src="img/like.png"/>{{c.likeCount}}</span> <span>Time of Post</span></p>
+													<span class="comment-owner">{{c.name}}</span><span>{{c.email}}</span><span>{{c.body}}</span>
+													<p><span class="enableHand" v-on:click ="addLike(c)">Like</span><span style="margin-right: 10em;"><img class="like"src="img/like.png"/>1</span> <span>Time of Post</span></p>
 												</div>
 											</div>
 											<div>
@@ -186,17 +192,33 @@ Vue.component('commentComp',{'template' : `<div>
 				 props: ['showComment'],							
 				data : function(){
 					return{
-						'commentsData' : [{'title' : 'Not very clear' , 'from' : 'Nandita', 'likeCount': 5},
-										  {'title' : 'Need to work on some areas' , 'from' : 'Andrew vilnisk' ,'likeCount': 5}]
+						'commentsData' : null
 					}
 				},
 				methods : {
 					addLike : function(comment){
-						console.log(comment);
 						comment.likeCount++
-					}
-				}
+					},
+                    fetchComments : function(){
+                        axios.get('http://jsonplaceholder.typicode.com/posts/' + this.$route.params.id+'/comments')
+							.then(response => {
+							this.commentsData = response.data;
+							
+							} );
+                    }
+				},
+                created() {
+                    this.fetchComments();
+                }
+                             
 });;
+
+Vue.component('loaderComp',{
+                'template' : `<div>
+                                <div v-if="showLoader"> <div><img  src="img/loader.gif"/></div></div>
+                                </div>`,
+             props : ['showLoader']
+})
 
 const routes = [
     { path: '/page1/:id', component: firstComponent },
@@ -210,8 +232,3 @@ var app = new Vue({
     router,
     el: "#app",
 }).$mount('#app')
-
-
-
-
-
